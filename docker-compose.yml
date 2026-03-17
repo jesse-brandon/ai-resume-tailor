@@ -1,0 +1,30 @@
+services:
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: resume_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: resume
+      POSTGRES_PASSWORD: resume
+      POSTGRES_DB: resume
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  liquibase:
+    image: liquibase/liquibase:latest
+    container_name: resume_liquibase
+    depends_on:
+      - postgres
+    volumes:
+      - ./database:/liquibase/changelog
+      - ./docker/liquibase.properties:/liquibase/liquibase.properties
+      - ./docker/drivers/postgresql-42.7.10.jar:/liquibase/lib/postgresql.jar
+    command:
+      - --defaultsFile=/liquibase/liquibase.properties
+      - update
+
+volumes:
+  postgres_data:
