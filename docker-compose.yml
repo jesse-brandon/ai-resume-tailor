@@ -31,6 +31,7 @@ services:
     entrypoint: ["liquibase"]
     command:
       - --defaultsFile=/liquibase/liquibase.properties
+      - --context=local
       - update
 
 volumes:

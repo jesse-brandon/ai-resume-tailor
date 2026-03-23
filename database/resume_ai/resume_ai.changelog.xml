@@ -15,7 +15,7 @@
     <!--CODE-->
     <include file="code/functions/score_bullets.sql" relativeToChangelogFile="true"/>
     <!--DATA-->
-
+    <include file="data/ai_seed.sql" relativeToChangelogFile="true" context="local"/>
     <!--PERMISSIONS-->
 
 </databaseChangeLog>

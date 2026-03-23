@@ -11,6 +11,7 @@
     <!--CODE-->
 
     <!--DATA-->
+    <include file="data/job_description_seed.sql" relativeToChangelogFile="true" context="local"/>
 
     <!--PERMISSIONS-->
 

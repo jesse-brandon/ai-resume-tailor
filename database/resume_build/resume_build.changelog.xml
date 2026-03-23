@@ -11,7 +11,7 @@
     <!--CODE-->
 
     <!--DATA-->
-
+    <include file="data/build_seed.sql" relativeToChangelogFile="true" context="local"/>
     <!--PERMISSIONS-->
 
 </databaseChangeLog>
