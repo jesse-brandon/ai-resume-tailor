@@ -11,3 +11,6 @@ CREATE TABLE resume_domain.experience_bullet (
 );
 --changeset jesse-brandon:experience_bullet_002 labels:index
 CREATE INDEX ix_experience_bullet_role ON resume_domain.experience_bullet(role_id);
+--changeset jesse-brandon:experience_bullet_003 labels:table
+ALTER TABLE resume_domain.experience_bullet
+ADD COLUMN embedding vector(1536);

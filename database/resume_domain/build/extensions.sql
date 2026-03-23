@@ -1,5 +1,3 @@
 --liquibase formatted sql
 --changeset jesse-brandon:extensions_001 labels:extension
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
---changeset jesse-brandon:extensions_002 labels:extension
 CREATE EXTENSION IF NOT EXISTS vector;
