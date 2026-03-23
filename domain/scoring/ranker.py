@@ -1,14 +1,38 @@
-def score_achievements(bullets, job_text):
+from infrastructure.db.connection import get_connection
 
-    job_words = set(job_text.lower().split())
 
-    scored = []
+def to_vector_str(embedding):
+    return "[" + ",".join(str(x) for x in embedding) + "]"
 
-    for b in bullets:
-        bullet_words = set(b["text"].lower().split())
 
-        score = len(bullet_words & job_words)
+def rank_bullets(job_embedding, top_n=5):
 
-        scored.append({"achievement": b, "score": score})
+    conn = get_connection()
+    cur = conn.cursor()
 
-    return sorted(scored, key=lambda x: x["score"], reverse=True)
+    vector_str = to_vector_str(job_embedding)
+
+    cur.execute(
+        """
+        SELECT
+            b.bullet_id,
+            b.bullet_text,
+            r.role_title,
+            e.employer_name
+        FROM resume_domain.experience_bullet b
+        JOIN resume_domain.role r
+            ON b.role_id = r.role_id
+        JOIN resume_domain.employer e
+            ON r.employer_id = e.employer_id
+        ORDER BY b.embedding <-> %s::vector
+        LIMIT %s
+    """,
+        (vector_str, top_n),
+    )
+
+    rows = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return [{"id": r[0], "text": r[1], "role": r[2], "employer": r[3]} for r in rows]

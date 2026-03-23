@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        .company {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>{{ name }}</h1>
+    <p>{{ title }}</p>
+
+    {% for section in sections %}
+    <h2>{{ section.role }}</h2>
+    <div class="company">{{ section.company }}</div>
+
+    <ul>
+        {% for bullet in section.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+</body>
+
+</html>

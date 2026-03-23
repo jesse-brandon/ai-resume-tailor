@@ -1,7 +1,19 @@
-def build_resume(scored_achievements, top_n=5):
+from collections import defaultdict
 
-    top = scored_achievements[:top_n]
 
-    lines = [a["achievement"]["text"] for a in top]
+def build_resume(scored_bullets):
 
-    return "\n".join(lines)
+    grouped = defaultdict(list)
+
+    for item in scored_bullets:
+        b = item["achievement"]
+
+        key = (b["employer"], b["role"])
+        grouped[key].append(b["text"])
+
+    sections = []
+
+    for (employer, role), bullets in grouped.items():
+        sections.append({"company": employer, "role": role, "bullets": bullets})
+
+    return {"name": "Jesse Brandon", "title": "Data Engineer", "sections": sections}

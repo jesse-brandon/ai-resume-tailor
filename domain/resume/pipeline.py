@@ -1,17 +1,20 @@
-from domain.bullets.repository import fetch_all_bullets
 from domain.job.ingest import ingest_job
 from domain.resume.builder import build_resume
-from domain.scoring.ranker import score_achievements
+from domain.scoring.ranker import rank_bullets
+from infrastructure.embeddings.provider import embed_text
+from infrastructure.pdf.renderer import render_pdf
 
 
 def generate_resume(job_text: str):
 
     job = ingest_job(job_text)
 
-    bullets = fetch_all_bullets()
+    job_embedding = embed_text(job)
 
-    scored = score_achievements(bullets, job)
+    bullets = rank_bullets(job_embedding)
 
-    resume = build_resume(scored)
+    resume_data = build_resume([{"achievement": b} for b in bullets])
 
-    return resume
+    pdf_path = render_pdf(resume_data)
+
+    return pdf_path
