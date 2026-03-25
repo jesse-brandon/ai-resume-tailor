@@ -31,8 +31,19 @@ services:
     entrypoint: ["liquibase"]
     command:
       - --defaultsFile=/liquibase/liquibase.properties
-      - --context=local
+      - --contexts=local
       - update
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://resume:resume@postgres:5432/resume
 
 volumes:
   postgres_data:

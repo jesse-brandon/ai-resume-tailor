@@ -1,6 +1,9 @@
 import os
 
 import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_connection():
@@ -9,5 +12,4 @@ def get_connection():
     if not db_url:
         raise Exception("DATABASE_URL is not set")
 
-    return psycopg2.connect(db_url)
     return psycopg2.connect(db_url)
