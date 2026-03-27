@@ -32,8 +32,8 @@
 
     {% for section in sections %}
     <h2>{{ section.role }}</h2>
-    <div class="company">{{ section.company }}</div>
-
+    <div class="company">{{ section.company }} — {{ section.location }}</div>
+    <div>{{ section.date_range }}</div>
     <ul>
         {% for bullet in section.bullets %}
         <li>{{ bullet }}</li>

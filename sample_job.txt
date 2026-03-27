@@ -1,0 +1,15 @@
+We are seeking a Senior Data Engineer to design and build scalable data pipelines.
+
+Responsibilities:
+- Develop and maintain ETL pipelines using Python and SQL
+- Optimize data workflows and improve performance of large-scale systems
+- Work with cloud platforms such as AWS or GCP
+- Design data models and support data warehousing solutions
+- Collaborate with analytics and engineering teams
+
+Requirements:
+- 5+ years of experience in data engineering
+- Strong proficiency in Python and SQL
+- Experience with PostgreSQL or other relational databases
+- Familiarity with distributed systems and data processing frameworks
+- Experience with APIs and data integration

@@ -155,6 +155,20 @@ Includes:
 
 ---
 
+## Sample Data
+
+A sample resume payload is available:
+
+examples/sample_resume.json
+
+Use it to test the API:
+
+curl -X POST http://localhost:8000/data/import-resume \
+  -H "Content-Type: application/json" \
+  -d @examples/sample_resume.json
+
+---
+
 ## 🎯 Why This Project Matters
 
 This project demonstrates:

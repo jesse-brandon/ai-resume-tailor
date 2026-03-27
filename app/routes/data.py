@@ -1,4 +1,5 @@
-from typing import List
+from datetime import date
+from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -12,11 +13,14 @@ router = APIRouter(prefix="/data", tags=["data"])
 
 class EmployerCreate(BaseModel):
     employer_name: str
+    location: str
 
 
 class RoleCreate(BaseModel):
     employer_id: UUID
     role_title: str
+    start_date: date
+    end_date: Optional[date] = None
 
 
 class SkillCreate(BaseModel):
@@ -40,11 +44,14 @@ class BulletInput(BaseModel):
 
 class RoleInput(BaseModel):
     role_title: str
+    start_date: date
+    end_date: Optional[date] = None
     bullets: List[BulletInput]
 
 
 class EmployerInput(BaseModel):
     employer_name: str
+    location: str
     roles: List[RoleInput]
 
 
@@ -60,11 +67,11 @@ def create_employer(payload: EmployerCreate):
 
     cur.execute(
         """
-        INSERT INTO resume_domain.employer (employer_name)
-        VALUES (%s)
+        INSERT INTO resume_domain.employer (employer_name, location)
+        VALUES (%s, %s)
         RETURNING employer_id
-    """,
-        (payload.employer_name,),
+        """,
+        (payload.employer_name, payload.location),
     )
 
     employer_id = cur.fetchone()[0]
@@ -85,10 +92,10 @@ def create_role(payload: RoleCreate):
     cur.execute(
         """
         INSERT INTO resume_domain.role (employer_id, role_title)
-        VALUES (%s, %s)
+        VALUES (%s, %s, %s, %s)
         RETURNING role_id
-    """,
-        (payload.employer_id, payload.role_title),
+        """,
+        (payload.employer_id, payload.role_title, payload.start_date, payload.end_date),
     )
 
     role_id = cur.fetchone()[0]
@@ -142,7 +149,7 @@ def create_bullet(payload: BulletCreate):
         INSERT INTO resume_domain.experience_bullet (role_id, bullet_text, embedding)
         VALUES (%s, %s, %s)
         RETURNING bullet_id
-    """,
+        """,
         (payload.role_id, payload.bullet_text, embedding),
     )
 
@@ -165,7 +172,7 @@ def get_bullets():
         """
         SELECT bullet_id, bullet_text
         FROM resume_domain.experience_bullet
-    """
+        """
     )
 
     rows = cur.fetchall()
@@ -186,7 +193,7 @@ def link_bullet_skill(payload: BulletSkillCreate):
         """
         INSERT INTO resume_domain.bullet_skill (bullet_id, skill_id)
         VALUES (%s, %s)
-    """,
+        """,
         (payload.bullet_id, payload.skill_id),
     )
 
@@ -209,11 +216,11 @@ def import_resume(payload: ResumeImport):
             # --- Employer ---
             cur.execute(
                 """
-                INSERT INTO resume_domain.employer (employer_name)
-                VALUES (%s)
+                INSERT INTO resume_domain.employer (employer_name, location)
+                VALUES (%s, %s)
                 RETURNING employer_id
-            """,
-                (employer.employer_name,),
+                """,
+                (employer.employer_name, employer.location),
             )
             employer_id = cur.fetchone()[0]
 
@@ -222,11 +229,13 @@ def import_resume(payload: ResumeImport):
                 # --- Role ---
                 cur.execute(
                     """
-                    INSERT INTO resume_domain.role (employer_id, role_title)
-                    VALUES (%s, %s)
+                    INSERT INTO resume_domain.role (
+                        employer_id, role_title, start_date, end_date
+                    )
+                    VALUES (%s, %s, %s, %s)
                     RETURNING role_id
-                """,
-                    (employer_id, role.role_title),
+                    """,
+                    (employer_id, role.role_title, role.start_date, role.end_date),
                 )
                 role_id = cur.fetchone()[0]
 
@@ -240,7 +249,7 @@ def import_resume(payload: ResumeImport):
                         INSERT INTO resume_domain.experience_bullet (role_id, bullet_text, embedding)
                         VALUES (%s, %s, %s)
                         RETURNING bullet_id
-                    """,
+                        """,
                         (role_id, bullet.bullet_text, embedding),
                     )
                     bullet_id = cur.fetchone()[0]
@@ -253,7 +262,7 @@ def import_resume(payload: ResumeImport):
                             SELECT skill_id
                             FROM resume_domain.skill
                             WHERE skill_name = %s
-                        """,
+                            """,
                             (skill_name,),
                         )
                         result = cur.fetchone()
@@ -266,7 +275,7 @@ def import_resume(payload: ResumeImport):
                                 INSERT INTO resume_domain.skill (skill_name)
                                 VALUES (%s)
                                 RETURNING skill_id
-                            """,
+                                """,
                                 (skill_name,),
                             )
                             skill_id = cur.fetchone()[0]
@@ -276,7 +285,7 @@ def import_resume(payload: ResumeImport):
                             """
                             INSERT INTO resume_domain.bullet_skill (bullet_id, skill_id)
                             VALUES (%s, %s)
-                        """,
+                            """,
                             (bullet_id, skill_id),
                         )
 

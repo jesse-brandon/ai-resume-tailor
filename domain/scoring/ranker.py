@@ -18,7 +18,10 @@ def rank_bullets(job_embedding, top_n=5):
             b.bullet_id,
             b.bullet_text,
             r.role_title,
-            e.employer_name
+            r.start_date,
+            r.end_date,
+            e.employer_name,
+            e.location
         FROM resume_domain.experience_bullet b
         JOIN resume_domain.role r
             ON b.role_id = r.role_id
@@ -35,4 +38,15 @@ def rank_bullets(job_embedding, top_n=5):
     cur.close()
     conn.close()
 
-    return [{"id": r[0], "text": r[1], "role": r[2], "employer": r[3]} for r in rows]
+    return [
+        {
+            "id": r[0],
+            "text": r[1],
+            "role": r[2],
+            "start_date": r[3],
+            "end_date": r[4],
+            "employer": r[5],
+            "location": r[6],
+        }
+        for r in rows
+    ]

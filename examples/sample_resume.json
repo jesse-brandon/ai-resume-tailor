@@ -1,0 +1,24 @@
+{
+    "employers": [
+        {
+            "employer_name": "ABC Corp",
+            "location": "Atlanta, GA",
+            "roles": [
+                {
+                    "role_title": "Senior Data Engineer",
+                    "start_date": "2022-01-01",
+                    "end_date": null,
+                    "bullets": [
+                        {
+                            "bullet_text": "Built scalable data pipelines using Python",
+                            "skills": [
+                                "Python",
+                                "ETL"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

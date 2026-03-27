@@ -1,10 +1,11 @@
 --liquibase formatted sql
 --changeset jesse:domain_seed_001 context:local
 -- Employer
-INSERT INTO resume_domain.employer (employer_id, employer_name)
+INSERT INTO resume_domain.employer (employer_id, employer_name, location)
 VALUES (
         'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        'Sherwin Williams'
+        'Sherwin Williams',
+        'Spartanburg, SC'
     );
 -- Role
 INSERT INTO resume_domain.role (
