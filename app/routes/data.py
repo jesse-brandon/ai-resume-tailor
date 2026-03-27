@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter
@@ -30,6 +31,25 @@ class BulletCreate(BaseModel):
 class BulletSkillCreate(BaseModel):
     bullet_id: UUID
     skill_id: UUID
+
+
+class BulletInput(BaseModel):
+    bullet_text: str
+    skills: List[str] = []
+
+
+class RoleInput(BaseModel):
+    role_title: str
+    bullets: List[BulletInput]
+
+
+class EmployerInput(BaseModel):
+    employer_name: str
+    roles: List[RoleInput]
+
+
+class ResumeImport(BaseModel):
+    employers: List[EmployerInput]
 
 
 @router.post("/employers")
@@ -90,8 +110,10 @@ def create_skill(payload: SkillCreate):
         """
         INSERT INTO resume_domain.skill (skill_name)
         VALUES (%s)
+        ON CONFLICT (skill_name)
+        DO UPDATE SET skill_name = EXCLUDED.skill_name
         RETURNING skill_id
-    """,
+        """,
         (payload.skill_name,),
     )
 
@@ -173,3 +195,97 @@ def link_bullet_skill(payload: BulletSkillCreate):
     conn.close()
 
     return {"status": "linked"}
+
+
+@router.post("/import-resume")
+def import_resume(payload: ResumeImport):
+
+    conn = get_connection()
+    cur = conn.cursor()
+
+    try:
+        for employer in payload.employers:
+
+            # --- Employer ---
+            cur.execute(
+                """
+                INSERT INTO resume_domain.employer (employer_name)
+                VALUES (%s)
+                RETURNING employer_id
+            """,
+                (employer.employer_name,),
+            )
+            employer_id = cur.fetchone()[0]
+
+            for role in employer.roles:
+
+                # --- Role ---
+                cur.execute(
+                    """
+                    INSERT INTO resume_domain.role (employer_id, role_title)
+                    VALUES (%s, %s)
+                    RETURNING role_id
+                """,
+                    (employer_id, role.role_title),
+                )
+                role_id = cur.fetchone()[0]
+
+                for bullet in role.bullets:
+
+                    # --- Bullet + embedding ---
+                    embedding = embed_text(bullet.bullet_text)
+
+                    cur.execute(
+                        """
+                        INSERT INTO resume_domain.experience_bullet (role_id, bullet_text, embedding)
+                        VALUES (%s, %s, %s)
+                        RETURNING bullet_id
+                    """,
+                        (role_id, bullet.bullet_text, embedding),
+                    )
+                    bullet_id = cur.fetchone()[0]
+
+                    for skill_name in bullet.skills:
+
+                        # --- Upsert skill ---
+                        cur.execute(
+                            """
+                            SELECT skill_id
+                            FROM resume_domain.skill
+                            WHERE skill_name = %s
+                        """,
+                            (skill_name,),
+                        )
+                        result = cur.fetchone()
+
+                        if result:
+                            skill_id = result[0]
+                        else:
+                            cur.execute(
+                                """
+                                INSERT INTO resume_domain.skill (skill_name)
+                                VALUES (%s)
+                                RETURNING skill_id
+                            """,
+                                (skill_name,),
+                            )
+                            skill_id = cur.fetchone()[0]
+
+                        # --- Link bullet_skill ---
+                        cur.execute(
+                            """
+                            INSERT INTO resume_domain.bullet_skill (bullet_id, skill_id)
+                            VALUES (%s, %s)
+                        """,
+                            (bullet_id, skill_id),
+                        )
+
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    finally:
+        cur.close()
+        conn.close()
