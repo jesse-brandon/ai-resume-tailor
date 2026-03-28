@@ -27,7 +27,9 @@ def build_resume(scored_bullets):
 
     sections = []
 
-    for (employer, role, location, start_date, end_date), bullets in grouped.items():
+    for (employer, role, location, start_date, end_date), bullets in sorted(
+        grouped.items(), key=lambda x: x[0][3] if x[0][3] else date.min, reverse=True
+    ):
         sections.append(
             {
                 "role": role,

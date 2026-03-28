@@ -31,7 +31,7 @@ services:
     entrypoint: ["liquibase"]
     command:
       - --defaultsFile=/liquibase/liquibase.properties
-      - --contexts=local
+      - --contexts=dev
       - update
 
   api:

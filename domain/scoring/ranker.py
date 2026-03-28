@@ -5,7 +5,7 @@ def to_vector_str(embedding):
     return "[" + ",".join(str(x) for x in embedding) + "]"
 
 
-def rank_bullets(job_embedding, top_n=5):
+def rank_bullets(job_embedding, top_n=20):
 
     conn = get_connection()
     cur = conn.cursor()

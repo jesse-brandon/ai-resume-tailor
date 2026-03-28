@@ -1,0 +1,33 @@
+Data Architect
+
+We’re looking for a hands‑on Data Architect to shape the design and direction of our cloud‑based data ecosystem. This role blends strategic architecture with practical solutioning—helping define how data flows through the organization while guiding best practices that ensure quality, performance, and long‑term scalability.
+
+
+What You’ll Do
+
+Develop and refine data models, schemas, and architectural patterns that support analytics, operational reporting, and enterprise applications.
+Lead data integration and ELT/ETL design, including performance tuning, data flow mapping, and system-to-system connectivity.
+Conduct data inventory assessments and create visual mappings that clarify lineage, dependencies, and business data usage.
+Define standards around coding, naming conventions, data quality, and architectural governance.
+Partner closely with Data Engineering—providing blueprints, prototypes, and technical guidance while they own pipeline implementation and maintenance.
+Evaluate cloud/data platforms (Snowflake, AWS, NoSQL, streaming tools, etc.) and recommend improvements or new capabilities.
+Support data governance initiatives, including metadata management, MDM strategies, and data quality frameworks.
+Mentor junior engineers on architectural patterns and best practices.
+
+
+Top Skills Needed
+
+Strong data modeling and solution design capabilities.
+Experience with system and data integrations across cloud platforms.
+Hands‑on ability to build proofs of concept using Snowflake and AWS services.
+Analytical mindset with the ability to solve complex business problems.
+
+
+Qualifications
+
+Bachelor’s or Master’s in Computer Science, Engineering, or related field.
+3–5 years of experience in data architecture or database design.
+Background in cloud data platforms (AWS, Snowflake), data warehousing, ingestion frameworks, and NoSQL technologies.
+Familiarity with Kafka, middleware, and modern data integration patterns.
+Strong communication skills and ability to collaborate across technical and business teams.
+Relevant certifications (e.g., cloud architecture) are a plus.
