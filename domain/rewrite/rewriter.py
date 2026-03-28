@@ -8,6 +8,9 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def rewrite_bullets(bullets: list, job_description: str) -> list:
 
+    if not bullets:
+        return bullets
+
     bullet_texts = [b["text"] for b in bullets]
 
     prompt = f"""
@@ -29,26 +32,29 @@ def rewrite_bullets(bullets: list, job_description: str) -> list:
         Bullets:
         {bullet_texts}
     """
-
-    response = client.chat.completions.create(
-        model="gpt-5-mini",
-        messages=[{"role": "user", "content": prompt}],
-    )
-
-    response_text = response.choices[0].message.content or ""
-
     try:
+        response = client.chat.completions.create(
+            model="gpt-5-mini",
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        response_text = response.choices[0].message.content or ""
+
         rewritten_texts = json.loads(response_text)
 
-        if not isinstance(rewritten_texts, list):
-            raise ValueError("Response is not a list")
+        # ✅ Validate length matches
+        if len(rewritten_texts) != len(bullets):
+            raise ValueError("Mismatch in bullet count")
+
+        # ✅ Apply rewritten bullets
+        for i, b in enumerate(bullets):
+            b["text"] = rewritten_texts[i]
+
+        return bullets
 
     except Exception as e:
-        print("RAW AI RESPONSE:")
-        print(response_text)
-        raise Exception(f"Failed to parse AI response: {e}")
+        print("⚠️ AI rewrite failed — using original bullets")
+        print("ERROR:", e)
 
-    for i, b in enumerate(bullets):
-        b["text"] = rewritten_texts[i]
-
-    return bullets
+        # 🔥 Fallback: return ORIGINAL bullets unchanged
+        return bullets
