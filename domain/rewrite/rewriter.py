@@ -1,3 +1,4 @@
+import json
 import os
 
 from openai import OpenAI
@@ -10,31 +11,42 @@ def rewrite_bullets(bullets: list, job_description: str) -> list:
     bullet_texts = [b["text"] for b in bullets]
 
     prompt = f"""
-You are a senior technical resume writer.
+        You are a senior technical resume writer.
 
-Rewrite each bullet to be:
-  concise (max 2 lines)
-  impact-focused (include outcome or result)
-  aligned to the job description keywords
-  truthful (do NOT invent or exaggerate)
+        Rewrite each bullet to align with the job description.
 
-Use strong action verbs.
+        STRICT RULES:
+        - Return ONLY valid JSON
+        - No explanations
+        - No numbering
+        - No markdown
+        - Output format EXACTLY:
+        ["bullet1", "bullet2", ...]
 
-Job Description:
-{job_description}
+        Job Description:
+        {job_description}
 
-Bullets:
-{bullet_texts}
-
-Return rewritten bullets as a list in the same order.
-"""
+        Bullets:
+        {bullet_texts}
+    """
 
     response = client.chat.completions.create(
         model="gpt-5-mini",
         messages=[{"role": "user", "content": prompt}],
     )
 
-    rewritten_texts = eval(response.choices[0].message.content)
+    response_text = response.choices[0].message.content or ""
+
+    try:
+        rewritten_texts = json.loads(response_text)
+
+        if not isinstance(rewritten_texts, list):
+            raise ValueError("Response is not a list")
+
+    except Exception as e:
+        print("RAW AI RESPONSE:")
+        print(response_text)
+        raise Exception(f"Failed to parse AI response: {e}")
 
     for i, b in enumerate(bullets):
         b["text"] = rewritten_texts[i]
