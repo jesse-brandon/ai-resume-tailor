@@ -1,5 +1,7 @@
 from domain.job.ingest import ingest_job
+from domain.profile.repository import get_active_profile
 from domain.resume.builder import build_resume
+from domain.resume.title_generator import generate_title
 from domain.rewrite.rewriter import rewrite_bullets
 from domain.scoring.ranker import rank_bullets
 from domain.skills.extractor import extract_skills
@@ -18,8 +20,18 @@ def generate_resume(job_text: str):
 
     skills = extract_skills(bullets, job)
 
-    resume_data = build_resume([{"achievement": b} for b in bullets], skills)
+    profile = get_active_profile()
+
+    if not profile:
+        raise Exception("No active profile found")
+
+    title = generate_title(job)
+
+    resume_data = build_resume(
+        [{"achievement": b} for b in bullets], skills, profile, title
+    )
 
     pdf_path = render_pdf(resume_data)
 
+    return pdf_path
     return pdf_path

@@ -10,10 +10,7 @@ def format_date(value):
     return str(value)
 
 
-def build_resume(scored_bullets, skills):
-
-    from collections import defaultdict
-    from datetime import date
+def build_resume(scored_bullets, skills, profile, title):
 
     grouped = defaultdict(list)
 
@@ -52,8 +49,11 @@ def build_resume(scored_bullets, skills):
         )
 
     return {
-        "name": "Jesse Brandon",
-        "title": "Data Engineer",
+        "name": profile["name"],
+        "email": profile["email"],
+        "phone": profile["phone"],
+        "location": profile["location"],
+        "title": title,
         "skills": skills,
         "sections": sections,
     }

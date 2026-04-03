@@ -64,6 +64,14 @@
     <h1>{{ name }}</h1>
     <div class="title">{{ title }}</div>
 
+    <div>
+        {{ email }}{% if phone %} | {{ phone }}{% endif %}
+    </div>
+
+    {% if location %}
+    <div>{{ location }}</div>
+    {% endif %}
+
     <!-- 🔥 SKILLS SECTION -->
     {% if skills %}
     <h2>Skills</h2>

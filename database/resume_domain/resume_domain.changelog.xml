@@ -11,6 +11,7 @@
     <include file="build/experience_bullet.sql" relativeToChangelogFile="true"/>
     <include file="build/skill.sql" relativeToChangelogFile="true"/>
     <include file="build/bullet_skill.sql" relativeToChangelogFile="true"/>
+    <include file="build/profile.sql" relativeToChangelogFile="true"/>
 
     <!--CODE-->
 
