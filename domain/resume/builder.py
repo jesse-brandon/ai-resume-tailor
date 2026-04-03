@@ -10,7 +10,11 @@ def format_date(value):
     return str(value)
 
 
-def build_resume(scored_bullets):
+def build_resume(scored_bullets, skills):
+
+    from collections import defaultdict
+    from datetime import date
+
     grouped = defaultdict(list)
 
     for item in scored_bullets:
@@ -25,10 +29,17 @@ def build_resume(scored_bullets):
         )
         grouped[key].append(b["text"])
 
+    def format_date(value):
+        if value is None:
+            return "Present"
+        if isinstance(value, date):
+            return value.strftime("%b %Y")
+        return str(value)
+
     sections = []
 
     for (employer, role, location, start_date, end_date), bullets in sorted(
-        grouped.items(), key=lambda x: x[0][3] if x[0][3] else date.min, reverse=True
+        grouped.items(), key=lambda x: x[0][3] or date.min, reverse=True
     ):
         sections.append(
             {
@@ -43,5 +54,6 @@ def build_resume(scored_bullets):
     return {
         "name": "Jesse Brandon",
         "title": "Data Engineer",
+        "skills": skills,
         "sections": sections,
     }

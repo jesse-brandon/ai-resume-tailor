@@ -6,21 +6,55 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
             margin: 40px;
         }
 
-        h2 {
-            margin-bottom: 5px;
+        h1 {
+            font-size: 20px;
+            margin-bottom: 0;
         }
 
-        .company {
-            font-weight: bold;
+        h2 {
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .title {
+            font-size: 12px;
             margin-bottom: 10px;
         }
 
+        .section {
+            margin-bottom: 10px;
+        }
+
+        .role {
+            font-weight: bold;
+        }
+
+        .company {
+            font-style: italic;
+        }
+
+        .date {
+            float: right;
+        }
+
         ul {
+            margin: 5px 0 10px 20px;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        .skills {
             margin-top: 5px;
-            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -28,17 +62,38 @@
 <body>
 
     <h1>{{ name }}</h1>
-    <p>{{ title }}</p>
+    <div class="title">{{ title }}</div>
+
+    <!-- 🔥 SKILLS SECTION -->
+    {% if skills %}
+    <h2>Skills</h2>
+    <div class="skills">
+        {{ skills | join(", ") }}
+    </div>
+    {% endif %}
+
+    <!-- 🔥 EXPERIENCE -->
+    <h2>Experience</h2>
 
     {% for section in sections %}
-    <h2>{{ section.role }}</h2>
-    <div class="company">{{ section.company }} — {{ section.location }}</div>
-    <div>{{ section.date_range }}</div>
-    <ul>
-        {% for bullet in section.bullets %}
-        <li>{{ bullet }}</li>
-        {% endfor %}
-    </ul>
+    <div class="section">
+
+        <div>
+            <span class="role">{{ section.role }}</span>
+            <span class="date">{{ section.date_range }}</span>
+        </div>
+
+        <div class="company">
+            {{ section.company }} — {{ section.location }}
+        </div>
+
+        <ul>
+            {% for bullet in section.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
     {% endfor %}
 
 </body>

@@ -21,12 +21,21 @@ def rank_bullets(job_embedding, top_n=20):
             r.start_date,
             r.end_date,
             e.employer_name,
-            e.location
+            e.location,
+            ARRAY_AGG(s.skill_name) AS skills
         FROM resume_domain.experience_bullet b
-        JOIN resume_domain.role r
-            ON b.role_id = r.role_id
-        JOIN resume_domain.employer e
-            ON r.employer_id = e.employer_id
+        JOIN resume_domain.role r ON b.role_id = r.role_id
+        JOIN resume_domain.employer e ON r.employer_id = e.employer_id
+        LEFT JOIN resume_domain.bullet_skill bs ON b.bullet_id = bs.bullet_id
+        LEFT JOIN resume_domain.skill s ON bs.skill_id = s.skill_id
+        GROUP BY
+            b.bullet_id,
+            b.bullet_text,
+            r.role_title,
+            r.start_date,
+            r.end_date,
+            e.employer_name,
+            e.location
         ORDER BY b.embedding <-> %s::vector
         LIMIT %s
     """,
@@ -47,6 +56,7 @@ def rank_bullets(job_embedding, top_n=20):
             "end_date": r[4],
             "employer": r[5],
             "location": r[6],
+            "skills": r[7] or [],
         }
         for r in rows
     ]
